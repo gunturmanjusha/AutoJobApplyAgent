@@ -1,13 +1,13 @@
 # AutoJobApplyAgent
 
-AutoJobApplyAgent is a personal job-search helper for senior software engineering and architecture roles in the San Francisco Bay Area and remote US roles.
+AutoJobApplyAgent is a personal job-search helper for Principal-and-above software engineering and architecture roles in the San Francisco Bay Area and remote US roles.
 
 You give it your resume and verified applicant details once. When you run `Main.java` in IntelliJ, it looks through permitted public job feeds, finds relevant openings, compares each job with your resume, and keeps a record of the best matches.
 
 ## What it does today
 
 - Reads a Word (`.docx` or `.doc`) or PDF resume.
-- Looks for senior software, Java, backend, staff, principal, lead, and architecture roles.
+- Looks for Principal, Senior Principal, Distinguished Engineer, Fellow, and Chief Architect-level software and backend roles.
 - Focuses on Bay Area roles and remote US opportunities.
 - Scores each opening from 0 to 100 based on your resume.
 - Selects opportunities scoring 60 or higher.
