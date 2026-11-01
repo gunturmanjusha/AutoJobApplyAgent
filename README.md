@@ -29,7 +29,7 @@ A Java 23 Maven application for permitted job discovery, local resume matching, 
 The default resume setting is currently:
 
 ```properties
-job.resume.path=private/Manjusha_Guntur_Resume.docx
+job.resume.path=private/resume.docx
 ```
 
 ## Configuration
@@ -55,4 +55,4 @@ Public job listings and a standard browser login do **not** grant permission to 
 
 ## Privacy
 
-This repository currently includes resume and applicant-profile files at the repository owner’s request. Anyone who can access the repository can read them. Keep the GitHub repository private and do not add credentials, API keys, browser sessions, or generated application databases to Git.
+Resume and applicant-profile files are local-only and ignored by Git. Copy the fictional profile template to `private/applicant.properties`, and put your actual resume at `private/resume.docx` (or change the configured path locally). Do not add credentials, API keys, browser sessions, or generated application databases to Git.
