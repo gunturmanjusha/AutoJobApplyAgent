@@ -3,6 +3,9 @@ package com.autojobapply;
 import com.autojobapply.application.SubmissionService;
 import com.autojobapply.config.Config;
 import com.autojobapply.discovery.JobDiscovery;
+import com.autojobapply.discovery.GreenhouseCompanyDiscoveryService;
+import com.autojobapply.discovery.GreenhouseJobDiscoveryService;
+import com.autojobapply.discovery.GreenhousePipelineService;
 import com.autojobapply.matching.JobMatcher;
 import com.autojobapply.model.*;
 import com.autojobapply.resume.ResumeParser;
@@ -22,15 +25,16 @@ public final class Main {
             Resume resume = new ResumeParser().parse(config.resumePath());
             ApplicantProfile profile = ApplicantProfile.load(config.profilePath(), resume);
             try (ApplicationTracker tracker = new ApplicationTracker(config.databasePath())) {
-                tracker.initialize(); List<Job> jobs = new JobDiscovery(config).discover(); summary.discovered = jobs.size();
+                tracker.initialize(); List<Job> jobs = new ArrayList<>(new JobDiscovery(config).discover()); summary.discovered = jobs.size();
                 JobMatcher matcher = new JobMatcher(resume, profile, config); List<ScoredJob> eligible = new ArrayList<>();
-                for (Job job : jobs) { if (tracker.isKnown(job)) { summary.duplicates++; continue; } ScoredJob scored = matcher.score(job); tracker.record(scored, scored.eligible() ? ApplicationStatus.MATCHED : ApplicationStatus.SKIPPED, null); if (scored.eligible()) eligible.add(scored); }
+                for (Job job : jobs) { if (tracker.isKnown(job)) { summary.duplicates++; continue; } ScoredJob scored = matcher.score(job); tracker.record(scored, scored.eligible() ? ApplicationStatus.MATCHED : ApplicationStatus.SKIPPED, null); if (scored.eligible()) { tracker.enqueue(scored); eligible.add(scored); } }
+                eligible.addAll(new GreenhousePipelineService(new GreenhouseCompanyDiscoveryService(),new GreenhouseJobDiscoveryService(),tracker,matcher,config).run());
                 eligible.sort(Comparator.comparingInt(ScoredJob::score).reversed()); summary.matched = eligible.size();
                 SubmissionService submitter = new SubmissionService(config, profile, tracker);
                 for (ScoredJob job : eligible.stream().limit(config.maxApplications()).toList()) summary.count(submitter.process(job));
                 tracker.exportCsv(config.csvPath());
             }
-        } catch (Exception e) { log.error("Run stopped before completion: {}", e.getMessage(), e); summary.failed++; }
+        } catch (Exception e) { System.err.println("AUTO JOB APPLY AGENT FAILED: " + e.getMessage()); e.printStackTrace(System.err); log.error("Run stopped before completion: {}", e.getMessage(), e); summary.failed++; }
         summary.print();
     }
     private static final class RunSummary { int discovered, matched, duplicates, submitted, blocked, unsupported, failed, attempted;
