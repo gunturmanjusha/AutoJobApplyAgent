@@ -1,58 +1,42 @@
 # AutoJobApplyAgent
 
-A Java 23 Maven application for permitted job discovery, local resume matching, and durable application tracking. The IntelliJ entry point is `com.autojobapply.Main`.
+AutoJobApplyAgent is a personal job-search helper for senior software engineering and architecture roles in the San Francisco Bay Area and remote US roles.
 
-## What it does
+You give it your resume and verified applicant details once. When you run `Main.java` in IntelliJ, it looks through permitted public job feeds, finds relevant openings, compares each job with your resume, and keeps a record of the best matches.
 
-- Reads `.docx`, legacy `.doc`, and PDF resumes.
-- Loads verified applicant information from `private/applicant.properties`.
-- Discovers relevant senior software, backend, and architecture jobs from permitted public feeds.
-- Filters for Bay Area roles and remote jobs, then assigns a transparent 0–100 resume-match score.
-- Selects jobs at or above the configured threshold (default: 60).
-- Persists job URLs, scores, statuses, and duplicate-prevention information in SQLite and exports a CSV report.
+## What it does today
 
-## Requirements
+- Reads a Word (`.docx` or `.doc`) or PDF resume.
+- Looks for senior software, Java, backend, staff, principal, lead, and architecture roles.
+- Focuses on Bay Area roles and remote US opportunities.
+- Scores each opening from 0 to 100 based on your resume.
+- Selects opportunities scoring 60 or higher.
+- Saves job links, match scores, and statuses so the same role is not processed twice.
+- Creates a spreadsheet-friendly report at `data/applications.csv` after each run.
 
-- Java 23
-- Maven (IntelliJ's bundled Maven is sufficient)
-- Internet access for permitted public job-feed discovery
+## What it does not do yet
 
-## Run from IntelliJ
+The project does not currently submit applications on company websites. It records those roles as unsupported unless an employer provides an authorized submission integration. It does not scrape LinkedIn, automate LinkedIn Easy Apply, bypass CAPTCHA or MFA, or guess answers to screening questions.
 
-1. Open `pom.xml` as a Maven project and set both the Project SDK and Maven importer JDK to Java 23.
-2. Reload the Maven project so dependencies are downloaded.
-3. Review `src/main/resources/application.properties`.
-4. Ensure `job.resume.path` points to your `.docx`, `.doc`, or `.pdf` resume.
-5. Review `private/applicant.properties` and complete only facts you have verified.
-6. Open `src/main/java/com/autojobapply/Main.java` and click **Run**.
+## Run it
 
-The default resume setting is currently:
+1. Open this project in IntelliJ and let Maven finish loading.
+2. Use Java 23 as the Project SDK.
+3. Put your resume at `private/resume.docx`, or update `job.resume.path` in `src/main/resources/application.properties`.
+4. Copy `private/applicant.properties.example` to `private/applicant.properties` and replace the fictional sample details with your own verified information.
+5. Open `src/main/java/com/autojobapply/Main.java` and click the green **Run** button.
 
-```properties
-job.resume.path=private/resume.docx
-```
+At the end of the run, look at:
 
-## Configuration
+- `data/applications.csv` for an easy-to-read job report.
+- `data/applications.db` for the complete local history and duplicate prevention.
 
-`application.properties` controls the minimum score, target location, remote inclusion, discovery/application limits, database and CSV locations, optional Greenhouse board tokens, and browser settings.
+## Files you may want to change
 
-`private/applicant.properties.example` is a reusable fictional profile that shows the expected format. The application reads only `private/applicant.properties`. Replace every sample value with verified information, and leave unknown work authorization, sponsorship, compensation, availability, or voluntary-disclosure fields blank.
+- `src/main/resources/application.properties` — score threshold, location, remote preference, and run limits.
+- `private/applicant.properties` — your contact details and verified application answers.
+- `private/applicant.properties.example` — a fictional example showing the expected format.
 
-## Output
+## Keep personal files private
 
-After a run, the application creates:
-
-- `data/applications.db` — authoritative SQLite application/job history.
-- `data/applications.csv` — CSV report generated from the database.
-
-These files are intentionally ignored by Git because they change across runs and may contain application history.
-
-## Submission boundary
-
-Public job listings and a standard browser login do **not** grant permission to automate applications. The current implementation therefore records a role as `UNSUPPORTED` unless an employer-authorized submission integration has been configured. It does not scrape LinkedIn, automate LinkedIn Easy Apply, bypass CAPTCHA or MFA, or fabricate screening answers.
-
-`SUBMITTED` is reserved for a future employer-authorized adapter that receives reliable submission confirmation. This avoids incorrectly claiming that an application was submitted.
-
-## Privacy
-
-Resume and applicant-profile files are local-only and ignored by Git. Copy the fictional profile template to `private/applicant.properties`, and put your actual resume at `private/resume.docx` (or change the configured path locally). Do not add credentials, API keys, browser sessions, or generated application databases to Git.
+Your real resume and `private/applicant.properties` are meant to stay on your computer. Do not put them, passwords, API keys, browser sessions, or generated application reports in a public repository.
