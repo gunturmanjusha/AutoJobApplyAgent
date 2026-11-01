@@ -6,6 +6,7 @@ public record Config(Properties values) {
   public Path resumePath(){return Path.of(get("job.resume.path"));} public Path profilePath(){return Path.of(get("job.applicant.profile.path"));} public Path databasePath(){return Path.of(get("job.database.path"));} public Path csvPath(){return Path.of(get("job.report.csv"));}
   public int minimumScore(){return Integer.parseInt(get("job.minimum.match.score"));} public int maxDiscovered(){return Integer.parseInt(get("job.max.discovered.per.run"));} public int maxApplications(){return Integer.parseInt(get("job.max.applications.per.run"));}
   public int maxSubmissions(){return Integer.parseInt(get("job.max.submissions.per.run","1"));}
+  public int greenhouseMaxBoards(){return Integer.parseInt(get("greenhouse.max.boards.per.run","50"));}
   public int validationFailureStopThreshold(){return Integer.parseInt(get("job.validation.failure.stop.threshold","1"));}
   public int maximumPostingAgeDays(){return Integer.parseInt(get("job.maximum.posting.age.days","30"));}
   public boolean includeRemote(){return Boolean.parseBoolean(get("job.include.remote"));} public boolean autoSubmit(){return Boolean.parseBoolean(get("job.auto.submit"));} public boolean authorizedSubmission(){return Boolean.parseBoolean(get("authorized.submission.enabled"));} public ExecutionMode executionMode(){return ExecutionMode.from(get("job.execution.mode","DISCOVER_ONLY"));}

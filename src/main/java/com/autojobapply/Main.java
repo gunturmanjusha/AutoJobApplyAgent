@@ -25,6 +25,7 @@ public final class Main {
             Config config = Config.load(); config.validateExecutionInputs(); Files.createDirectories(config.databasePath().getParent());
             Resume resume = new ResumeParser().parse(config.resumePath());
             ApplicantProfile profile = ApplicantProfile.load(config.profilePath(), resume);
+            if (config.executionMode() == ExecutionMode.DRY_RUN) System.out.printf("DRY_RUN synthetic assets verified: resume=%s, parsed characters=%d, parsed terms=%d, profile=%s%n", config.resumePath(), resume.text().length(), resume.terms().size(), config.profilePath());
             try (ApplicationTracker tracker = new ApplicationTracker(config.databasePath())) {
                 tracker.initialize(); List<Job> jobs = new ArrayList<>(new JobDiscovery(config).discover()); summary.discovered = jobs.size();
                 JobMatcher matcher = new JobMatcher(resume, profile, config); List<ScoredJob> eligible = new ArrayList<>();
