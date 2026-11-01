@@ -49,7 +49,8 @@ public final class GreenhouseApplicationAdapter {
             fill(form, "input[type=tel],input[name*=phone]", profile.get("phone"));
             fill(form, "input[name*=location]", profile.get("location"));
             Locator upload = form.locator("input[type=file]").first();
-            if (upload.count() > 0) upload.setInputFiles(resume);
+            if (upload.count() == 0) return attempt(ApplicationStatus.NEEDS_MANUAL_ACTION, null, false, "resume-control-not-found");
+            upload.setInputFiles(resume);
 
             FormValidationResult validation = validationGate.validate(profile, resume, inspectedFields(form), visibleErrors(form));
             if (!validation.valid()) return attempt(ApplicationStatus.NEEDS_MANUAL_ACTION, validation, false, "validation-failed");
@@ -82,7 +83,7 @@ public final class GreenhouseApplicationAdapter {
             boolean required = input.getAttribute("required") != null || "true".equalsIgnoreCase(attribute(input, "aria-required"));
             boolean screening = name.toLowerCase().contains("question") || name.toLowerCase().contains("custom");
             boolean supported = resume || supported(name);
-            String value = resume ? attribute(input, "value") : input.inputValue();
+            String value = input.inputValue();
             fields.add(new FormField(name, required, supported, screening, resume, value));
         }
         return fields;

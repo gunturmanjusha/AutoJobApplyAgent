@@ -53,12 +53,9 @@ public final class ApplicationValidationGate {
             }
         }
         if (!visibleErrors.isEmpty()) unresolved.add("visible-form-errors");
-        boolean valid = unresolved.isEmpty() && visibleErrors.isEmpty() && (!hasRequiredResume(fields) || resumeAttached);
+        if (!resumeAttached) unresolved.add("resume:attachment-not-verified");
+        boolean valid = unresolved.isEmpty() && visibleErrors.isEmpty() && resumeAttached;
         return new FormValidationResult(valid, List.copyOf(validated), List.copyOf(unresolved), List.copyOf(visibleErrors), resumeAttached);
-    }
-
-    private boolean hasRequiredResume(List<FormField> fields) {
-        return fields.stream().anyMatch(field -> field.resumeAttachment() && field.required());
     }
 
     private String expectedValue(String key, String legalName, String email, String phone, String location) {
