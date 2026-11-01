@@ -29,7 +29,10 @@ public final class Main {
                 tracker.initialize(); List<Job> jobs = new ArrayList<>(new JobDiscovery(config).discover()); summary.discovered = jobs.size();
                 JobMatcher matcher = new JobMatcher(resume, profile, config); List<ScoredJob> eligible = new ArrayList<>();
                 for (Job job : jobs) { if (tracker.isKnown(job)) { summary.duplicates++; continue; } ScoredJob scored = matcher.score(job); tracker.record(scored, scored.eligible() ? ApplicationStatus.MATCHED : ApplicationStatus.SKIPPED, null); if (scored.eligible()) { tracker.enqueue(scored); eligible.add(scored); } }
-                eligible.addAll(new GreenhousePipelineService(new GreenhouseCompanyDiscoveryService(),new GreenhouseJobDiscoveryService(),tracker,matcher,config).run());
+                GreenhousePipelineService greenhouse = new GreenhousePipelineService(new GreenhouseCompanyDiscoveryService(),new GreenhouseJobDiscoveryService(),tracker,matcher,config);
+                try { eligible.addAll(greenhouse.run()); }
+                finally { System.out.println(greenhouse.report().render()); }
+                summary.discovered += greenhouse.report().jobsRetrieved();
                 eligible.sort(Comparator.comparingInt(ScoredJob::score).reversed()); summary.matched = eligible.size();
                 if (config.executionMode() != ExecutionMode.DISCOVER_ONLY) {
                     SubmissionService submitter = new SubmissionService(config, profile, tracker);

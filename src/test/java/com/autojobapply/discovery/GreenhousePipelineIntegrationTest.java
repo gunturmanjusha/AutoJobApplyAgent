@@ -40,6 +40,13 @@ public final class GreenhousePipelineIntegrationTest {
                     new JobMatcher(resume, profile, config), config);
 
             if (pipeline.run().size() != 1) throw new AssertionError("first run should queue one eligible job");
+            String diagnostics = pipeline.report().render();
+            if (!diagnostics.contains("directory download: COMPLETED")
+                    || !diagnostics.contains("job retrieval: COMPLETED")
+                    || !diagnostics.contains("matching: COMPLETED")
+                    || !diagnostics.contains("queuing: COMPLETED")) {
+                throw new AssertionError("stage diagnostics did not report completed pipeline stages");
+            }
             assertCount(database, "greenhouse_employers", 1);
             assertCount(database, "greenhouse_jobs", 1);
             assertCount(database, "application_queue", 1);
