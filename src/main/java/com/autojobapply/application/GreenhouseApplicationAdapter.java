@@ -38,16 +38,16 @@ public final class GreenhouseApplicationAdapter {
              BrowserContext context = browser.newContext()) {
             Page page = context.newPage();
             page.navigate(scored.job().applicationUrl(), new Page.NavigateOptions().setWaitUntil(WaitUntilState.DOMCONTENTLOADED));
-            if (page.locator("input[type=password], text=Sign in, text=Log in").count() > 0)
+            if (page.locator("input[type=password]").count() > 0 || page.getByText("Sign in").count() > 0 || page.getByText("Log in").count() > 0)
                 return attempt(ApplicationStatus.LOGIN_REQUIRED, null, false, "login-required");
             Locator form = page.locator("form").first();
             if (form.count() == 0) return attempt(ApplicationStatus.UNSUPPORTED, null, false, "application-form-not-found");
 
             fill(form, "input[name*=first_name],input[id*=first_name]", first(profile.get("legal.name")));
             fill(form, "input[name*=last_name],input[id*=last_name]", last(profile.get("legal.name")));
-            fill(form, "input[type=email],input[name*=email]", profile.get("email"));
+            fill(form, "input[type=email],input[name*=email],input[id=email],input[autocomplete=email]", profile.get("email"));
             fill(form, "input[type=tel],input[name*=phone]", profile.get("phone"));
-            fill(form, "input[name*=location]", profile.get("location"));
+            fill(form, "input[name*=location],input[id*=location]", profile.get("location"));
             Locator upload = form.locator("input[type=file]").first();
             if (upload.count() == 0) return attempt(ApplicationStatus.NEEDS_MANUAL_ACTION, null, false, "resume-control-not-found");
             upload.setInputFiles(resume);
@@ -68,7 +68,8 @@ public final class GreenhouseApplicationAdapter {
                     ? attempt(ApplicationStatus.SUBMITTED, validation, true, "post-submit-transition-and-success-component")
                     : attempt(ApplicationStatus.NEEDS_VERIFICATION, validation, true, "no-credible-employer-confirmation");
         } catch (Exception exception) {
-            return attempt(ApplicationStatus.FAILED, null, false, exception.getClass().getSimpleName());
+            String detail = exception.getMessage() == null ? "no detail" : exception.getMessage().replaceAll("[\\r\\n]+", " ").trim();
+            return attempt(ApplicationStatus.FAILED, null, false, exception.getClass().getSimpleName() + ": " + detail.substring(0, Math.min(detail.length(), 500)));
         }
     }
 
