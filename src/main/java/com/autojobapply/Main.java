@@ -22,7 +22,7 @@ public final class Main {
     public static void main(String[] args) {
         RunSummary summary = new RunSummary();
         try {
-            Config config = Config.load(); Files.createDirectories(config.databasePath().getParent());
+            Config config = Config.load(); config.validateExecutionInputs(); Files.createDirectories(config.databasePath().getParent());
             Resume resume = new ResumeParser().parse(config.resumePath());
             ApplicantProfile profile = ApplicantProfile.load(config.profilePath(), resume);
             try (ApplicationTracker tracker = new ApplicationTracker(config.databasePath())) {
