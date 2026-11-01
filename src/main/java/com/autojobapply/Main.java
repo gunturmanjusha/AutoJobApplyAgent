@@ -27,13 +27,14 @@ public final class Main {
             ApplicantProfile profile = ApplicantProfile.load(config.profilePath(), resume);
             if (config.executionMode() == ExecutionMode.DRY_RUN) System.out.printf("DRY_RUN synthetic assets verified: resume=%s, parsed characters=%d, parsed terms=%d, profile=%s%n", config.resumePath(), resume.text().length(), resume.terms().size(), config.profilePath());
             try (ApplicationTracker tracker = new ApplicationTracker(config.databasePath())) {
-                tracker.initialize(); List<ScoredJob> eligible = new ArrayList<>(); String queuedIdentity = System.getProperty("job.queue.identity", "").trim();
+                tracker.initialize(); JobMatcher matcher = new JobMatcher(resume, profile, config); int reclassified = 0; for (ScoredJob queued : tracker.readyQueuedJobs()) if (!matcher.score(queued.job()).eligible()) { tracker.markQueueIneligible(queued.job().identity()); reclassified++; } if (reclassified > 0) System.out.println("Reclassified incompatible queued jobs: " + reclassified); List<ScoredJob> eligible = new ArrayList<>(); String queuedIdentity = System.getProperty("job.queue.identity", "").trim();
                 if (!queuedIdentity.isBlank()) {
-                    ScoredJob queued = tracker.queuedJob(queuedIdentity).orElseThrow(() -> new IllegalArgumentException("READY_TO_APPLY queue entry not found: " + queuedIdentity));
-                    eligible.add(queued); summary.discovered = 1; System.out.println("Using existing queued job only: " + queued.job().identity());
+                    Optional<ScoredJob> queued = tracker.queuedJob(queuedIdentity); summary.discovered = 1;
+                    if (queued.isPresent()) { eligible.add(queued.get()); System.out.println("Using existing queued job only: " + queued.get().job().identity()); }
+                    else if ("INELIGIBLE".equals(tracker.queueState(queuedIdentity).orElse(""))) System.out.println("Existing queued job is ineligible; browser processing skipped: " + queuedIdentity);
+                    else throw new IllegalArgumentException("READY_TO_APPLY queue entry not found: " + queuedIdentity);
                 } else {
                     List<Job> jobs = new ArrayList<>(new JobDiscovery(config).discover()); summary.discovered = jobs.size();
-                    JobMatcher matcher = new JobMatcher(resume, profile, config);
                     for (Job job : jobs) { if (tracker.isKnown(job)) { summary.duplicates++; continue; } ScoredJob scored = matcher.score(job); tracker.record(scored, scored.eligible() ? ApplicationStatus.MATCHED : ApplicationStatus.SKIPPED, null); if (scored.eligible()) { tracker.enqueue(scored); eligible.add(scored); } }
                     GreenhousePipelineService greenhouse = new GreenhousePipelineService(new GreenhouseCompanyDiscoveryService(),new GreenhouseJobDiscoveryService(),tracker,matcher,config);
                     try { eligible.addAll(greenhouse.run()); }

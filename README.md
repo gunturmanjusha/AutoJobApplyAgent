@@ -25,7 +25,7 @@ Only Greenhouse is in scope now.
 
 | Capability | Status |
 | --- | --- |
-| Resume parsing, applicant profile, matching, SQLite/CSV, duplicate checks | Implemented; compiled |
+| Resume parsing, applicant profile, matching, SQLite/CSV, duplicate checks | Implemented; compiled; specialized-platform compatibility gate blocks unsupported Salesforce, SAP, ServiceNow, Workday, Oracle Fusion, and Dynamics 365 roles |
 | Public Remotive and configured Greenhouse job retrieval | Implemented |
 | Persistent browser sessions | Implemented |
 | Greenhouse form adapter | Label-based fictional-answer resolution, DOM validation, resume attachment validation, and local fixture safety tests implemented; submission remains disabled |
@@ -35,7 +35,7 @@ Only Greenhouse is in scope now.
 
 ### Playwright status
 
-Native IntelliJ `Greenhouse DRY RUN` has launched Playwright against one public live Greenhouse form: Broadsign’s `Salesforce Solution Architect` (`broadsign|7963904003`). Using only the ignored fictional Jordan Rivera profile and fictional resume, the adapter verified the actual DOM values for first name, last name, email, country, phone, location, LinkedIn profile, and the explicit answer `No` to “Are you located in Montreal, QC, Canada?” It also verified the visible resume attachment. The resulting validation record is `READY_FOR_SUBMISSION_IN_DRY_RUN`, with `submit_attempted=0`.
+Native IntelliJ `Greenhouse DRY RUN` has launched Playwright against one public live Greenhouse form: Broadsign’s `Salesforce Solution Architect` (`broadsign|7963904003`). Using only the ignored fictional Jordan Rivera profile and fictional resume, the adapter verified the actual DOM values for first name, last name, email, country, phone, location, LinkedIn profile, and the explicit answer `No` to “Are you located in Montreal, QC, Canada?” It also verified the visible resume attachment. The resulting validation record is `READY_FOR_SUBMISSION_IN_DRY_RUN`, with `submit_attempted=0`. Subsequent job-eligibility revalidation correctly marked that queue record `INELIGIBLE`: the role’s substantive Salesforce administration and certification requirements are not evidenced by the fictional Java backend profile. The browser-validation evidence remains retained and is independent of eligibility.
 
 This is evidence for that form pattern only, not a claim of universal Greenhouse support or a submitted application. Other forms may contain different required questions and must remain `NEEDS_MANUAL_ACTION` unless a compatible, explicit applicant-profile answer and DOM validation are available.
 
