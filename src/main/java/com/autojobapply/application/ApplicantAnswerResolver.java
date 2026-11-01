@@ -8,6 +8,8 @@ import java.util.Optional;
 final class ApplicantAnswerResolver {
     Optional<String> answer(ApplicantProfile profile, String label) {
         String key = normalize(label);
+        Optional<String> configured = value(profile.get("answer." + key.replace(' ', '.')));
+        if (configured.isPresent()) return configured;
         if (key.contains("preferred") && key.contains("first") && key.contains("name")) return value(first(profile.get("legal.name")));
         if (key.contains("location")) return value(profile.get("location"));
         if (key.equals("country") || key.contains("country of residence")) return value(profile.get("country"));

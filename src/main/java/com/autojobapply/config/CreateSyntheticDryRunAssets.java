@@ -21,7 +21,7 @@ public final class CreateSyntheticDryRunAssets {
         values.setProperty("legal.name", "Jordan Rivera");
         values.setProperty("email", "jordan.rivera@example.invalid");
         values.setProperty("phone", "4155550147");
-        values.setProperty("location", "San Francisco, CA");
+        values.setProperty("location", "San Francisco, California, United States");
         values.setProperty("country", "United States");
         values.setProperty("state", "California");
         values.setProperty("city", "San Francisco");
@@ -33,6 +33,7 @@ public final class CreateSyntheticDryRunAssets {
         values.setProperty("work.authorization.answer", "Yes");
         values.setProperty("referral.answer", "No");
         values.setProperty("sms.consent.answer", "No, I do not consent to text messages");
+        values.setProperty("answer.are.you.located.in.montreal.qc.canada", "No");
         values.setProperty("visa.sponsorship", "Synthetic test answer only");
         values.setProperty("salary.expectation", "Synthetic test answer only");
         values.setProperty("employment.1.company", "Northstar Platform Labs");
