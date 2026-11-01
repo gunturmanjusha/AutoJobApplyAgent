@@ -1,24 +1,50 @@
 # Fictional sample only. Copy to private/applicant.properties and replace every value.
 # This example is safe to commit; do not add passwords, tokens, or real answers to it.
 legal.name=Amore Mio
+preferred.name=Amore
 email=amore.mio@example.com
 phone=415-555-0142
+address.line1=100 Market Street
+address.line2=Apartment 10
+city=San Francisco
+state=CA
+postal.code=94105
+country=United States
 location=San Francisco, CA
 linkedin.url=https://www.linkedin.com/in/amore-mio
 github.url=https://github.com/amore-mio
+portfolio.url=https://amoremio.example.com
+
+# Employment eligibility. Use only verified answers for the job's country.
 work.authorization=Authorized to work in the United States
 visa.sponsorship=No sponsorship required
+security.clearance=No active clearance
+minimum.age.requirement=yes
+
+# Role and work preferences.
 relocation=Open to Bay Area hybrid and remote roles
+target.locations=San Francisco Bay Area;Remote - United States
+employment.type.preference=Full-time
+remote.preference=Hybrid or remote
+travel.willingness=Up to 10 percent
 salary.expectation=150000 base
 available.start.date=2026-12-01
 notice.period=2 weeks
-employment.type.preference=Full-time
-remote.preference=Hybrid or remote
+
+# Optional professional application facts.
+website.url=https://amoremio.example.com
+years.of.experience=10
+highest.education=Master of Science
+
 # Leave sensitive/voluntary fields blank unless you intentionally want to disclose them.
+terms.consent=yes
 criminal.history=
 disability.disclosure=
 veteran.disclosure=
 gender.identity=
+pronouns=
 race.ethnicity=
 # Employer-specific answers can use this convention:
 screening.question.willing-to-work-hybrid=yes
+screening.question.authorized-to-work-in-us=yes
+screening.question.require-sponsorship=no
