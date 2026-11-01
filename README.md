@@ -1,68 +1,59 @@
 # AutoJobApplyAgent
 
-AutoJobApplyAgent is a personal job-search helper for Staff, Lead, Principal, and architecture software roles in the San Francisco Bay Area and remote US roles.
+Java 21 IntelliJ application for high-volume, legitimate job applications. Its future objective is hundreds of relevant confirmed applications from one Run action; this is a product goal, not a claim of current results.
 
-You give it your resume and verified applicant details once. When you run `Main.java` in IntelliJ, it looks through permitted public job feeds, finds relevant openings, compares each job with your resume, and keeps a record of the best matches.
+## Workflow
 
-## What you can do today
+`Main.java → ATS company discovery → job retrieval → filtering → resume matching → persistent queue → ATS adapter → verified submission → SQLite/CSV`
 
-- Reads a Word (`.docx` or `.doc`) or PDF resume.
-- Looks for Staff, Lead, Principal, Architect, Distinguished Engineer, Fellow, and Chief Architect-level software and backend roles. This includes titles such as “Senior Principal Engineer” but excludes Senior-only titles such as “Senior Software Engineer.”
-- Focuses on Bay Area roles and remote US opportunities.
-- Scores each opening from 0 to 100 based on your resume.
-- Selects opportunities scoring 60 or higher.
-- Saves job links, match scores, and statuses so the same role is not processed twice.
-- Creates a spreadsheet-friendly report at `data/applications.csv` after each run.
-- Keeps duplicate-prevention history in `data/applications.db`.
-- Supports local persistent employer browser sessions. After you sign in to an employer site in a visible browser, its saved session can be reused while it remains valid.
+The system must not require manual company lists, board tokens, or job URLs. A discovered job is never a submitted application.
 
-## What happens when you run `Main.java`
+## Targeting
 
-1. It reads your resume and applicant profile.
-2. It searches permitted public job feeds for recent Bay Area and remote roles.
-3. It filters and scores each job against your resume.
-4. It records eligible matches and skips duplicates.
-5. It writes the CSV report and SQLite history to the local `data/` folder.
+Principal, Staff, Senior Staff, Lead, Architect, and equivalent backend/platform roles; Java, Spring Boot, Kafka, cloud, and distributed systems; Bay Area and eligible remote-US jobs; configurable 60% minimum score; mandatory eligibility overrides score.
 
-## What is still being built
+## ATS roadmap
 
-The project does not yet contain complete employer-specific form adapters, so it does not currently fill or submit company applications. It records these as unsupported until a documented, permitted application path is implemented.
+1. Greenhouse: public board discovery, validation, job retrieval, matching, queueing, authorized form submission, confirmation.
+2. Oracle Fusion Cloud Recruiting.
+3. Workday.
+4. Lever.
 
-It does not scrape LinkedIn, automate LinkedIn Easy Apply, bypass CAPTCHA or MFA, or guess screening answers.
+Only Greenhouse is in scope now.
 
-## Run it
-
-1. Open this project in IntelliJ and let Maven finish loading.
-2. Use Java 21 as the Project SDK.
-3. Put your resume at `private/resume.docx`, or update `job.resume.path` in `src/main/resources/application.properties`.
-4. Copy `private/applicant.properties.example` to `private/applicant.properties` and replace the fictional sample details with your own verified information.
-5. Open `src/main/java/com/autojobapply/Main.java` and click the green **Run** button.
-
-At the end of the run, look at:
-
-- `data/applications.csv` for an easy-to-read job report.
-- `data/applications.db` for the complete local history and duplicate prevention.
-
-## Files you may want to change
-
-- `src/main/resources/application.properties` — score threshold, location, remote preference, and run limits.
-- `private/applicant.properties` — your contact details and verified application answers.
-- `private/applicant.properties.example` — a fictional example showing the expected format.
-
-## Keep personal files private
-
-Your real resume and `private/applicant.properties` are meant to stay on your computer. Do not put them, passwords, API keys, browser sessions, or generated application reports in a public repository.
-
-## Current status
+## Current verified status
 
 | Capability | Status |
 | --- | --- |
-| Resume reading, job discovery, matching, SQLite, and CSV reports | Working |
-| Persistent local employer browser sessions | Working |
-| Gmail OAuth security foundation | Needs your local Google OAuth client configuration |
-| Employer form filling and confirmed submission | Not yet implemented per ATS platform |
-| LinkedIn automation | Not part of Phase 1 |
+| Resume parsing, applicant profile, matching, SQLite/CSV, duplicate checks | Implemented; compiled |
+| Public Remotive and configured Greenhouse job retrieval | Implemented |
+| Persistent browser sessions | Implemented; browser execution unverified |
+| Greenhouse form adapter | Implemented but unverified against real forms; submission disabled |
+| Automatic Greenhouse board-directory ingestion and persistent queue | In progress |
+| Confirmed employer submissions | Not implemented or verified |
+| Gmail, LinkedIn, Oracle Fusion, Workday, Lever | Not in this phase |
 
-### Greenhouse validation status
+### Playwright status
 
-The first Greenhouse adapter is compiled but has **not** been validated against a live employer form in this environment. The local Playwright Chromium runtime is not installed, so no real employer pages were opened, no profile fields were filled, and no resume was attached. Production submission remains disabled. The adapter now requires both a post-submit page transition and a specific application-success component before it can record `SUBMITTED`; generic page text alone is not sufficient.
+Commit `f6ba356` established that Codex stalls in `Playwright.create()` before browser launch. Chromium is installed, but form validation must run in IntelliJ outside this environment. No real form, resume upload, or employer submission has been claimed as tested.
+
+## Greenhouse Step 2
+
+Greenhouse has no global board API. The next implementation ingests a legitimate public directory, validates tokens through `boards-api.greenhouse.io/v1/boards/{token}/jobs?content=true`, persists valid employers, refreshes open jobs, filters/matches them, and queues eligible work. Coverage is measured, never treated as universal.
+
+## Run locally
+
+1. Open `pom.xml` with Java 21 in IntelliJ.
+2. Keep the resume at `private/resume.docx` or configure `job.resume.path`.
+3. Copy `private/applicant.properties.example` to ignored `private/applicant.properties`; use verified answers only.
+4. Run `com.autojobapply.Main`.
+
+`data/applications.db` is authoritative; `data/applications.csv` is its report. Keep `authorized.submission.enabled=false` until a platform adapter is validated. `SUBMITTED` requires genuine employer confirmation.
+
+## Reliability and safety
+
+The scalability objective is thousands of boards and hundreds of applications per run. Use bounded concurrency, rate limits, retries, checkpoints, resume-safe recovery, and duplicate prevention. Never invent answers, bypass CAPTCHA/access controls, or commit resumes, profiles, sessions, tokens, or runtime data to public Git.
+
+## Development rules
+
+Read this README before architectural changes; preserve the one-click confirmed-application objective; reuse working code; do not reorder ATS phases without instruction; update status only with verified evidence; keep this README synchronized with architecture changes.
