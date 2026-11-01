@@ -7,7 +7,7 @@ You give it your resume and verified applicant details once. When you run `Main.
 ## What it does today
 
 - Reads a Word (`.docx` or `.doc`) or PDF resume.
-- Looks for Staff, Lead, Principal, Architect, Distinguished Engineer, Fellow, and Chief Architect-level software and backend roles; it excludes titles containing “Senior.”
+- Looks for Staff, Lead, Principal, Architect, Distinguished Engineer, Fellow, and Chief Architect-level software and backend roles. This includes titles such as “Senior Principal Engineer” but excludes Senior-only titles such as “Senior Software Engineer.”
 - Focuses on Bay Area roles and remote US opportunities.
 - Scores each opening from 0 to 100 based on your resume.
 - Selects opportunities scoring 60 or higher.
