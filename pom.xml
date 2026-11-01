@@ -9,7 +9,7 @@
     <version>1.0.0</version>
 
     <properties>
-        <maven.compiler.release>23</maven.compiler.release>
+        <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
@@ -21,7 +21,9 @@
         <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-api</artifactId><version>2.0.13</version></dependency>
         <dependency><groupId>ch.qos.logback</groupId><artifactId>logback-classic</artifactId><version>1.5.7</version></dependency>
         <dependency><groupId>com.microsoft.playwright</groupId><artifactId>playwright</artifactId><version>1.47.0</version></dependency>
+        <dependency><groupId>com.google.api-client</groupId><artifactId>google-api-client</artifactId><version>2.7.0</version></dependency>
+        <dependency><groupId>com.google.apis</groupId><artifactId>google-api-services-gmail</artifactId><version>v1-rev20240520-2.0.0</version></dependency>
     </dependencies>
-    <build><plugins><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><version>3.13.0</version><configuration><release>23</release></configuration></plugin></plugins></build>
+    <build><plugins><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><version>3.13.0</version><configuration><release>21</release></configuration></plugin></plugins></build>
 
 </project>
