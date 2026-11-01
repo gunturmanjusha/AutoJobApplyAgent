@@ -1,23 +1,24 @@
-# Copy to private/applicant.properties (ignored by Git). Leave unknown answers blank.
-legal.name=
-email=
-phone=
-location=San Francisco Bay Area, CA
-linkedin.url=
-github.url=
-work.authorization=
-visa.sponsorship=
-relocation=
-salary.expectation=
-# Answer only when you have explicitly verified the value. Do not add passwords here.
-available.start.date=
-notice.period=
-employment.type.preference=
-remote.preference=
+# Fictional sample only. Copy to private/applicant.properties and replace every value.
+# This example is safe to commit; do not add passwords, tokens, or real answers to it.
+legal.name=Jordan Example
+email=jordan.example@example.com
+phone=415-555-0142
+location=San Francisco, CA
+linkedin.url=https://www.linkedin.com/in/jordan-example
+github.url=https://github.com/jordan-example
+work.authorization=Authorized to work in the United States
+visa.sponsorship=No sponsorship required
+relocation=Open to Bay Area hybrid and remote roles
+salary.expectation=150000 base
+available.start.date=2026-12-01
+notice.period=2 weeks
+employment.type.preference=Full-time
+remote.preference=Hybrid or remote
 # Leave sensitive/voluntary fields blank unless you intentionally want to disclose them.
 criminal.history=
 disability.disclosure=
 veteran.disclosure=
 gender.identity=
 race.ethnicity=
-# Employer-specific, verified answers may be added as screening.question.<short-name>=...
+# Employer-specific answers can use this convention:
+screening.question.willing-to-work-hybrid=yes

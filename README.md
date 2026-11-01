@@ -36,7 +36,7 @@ job.resume.path=private/Manjusha_Guntur_Resume.docx
 
 `application.properties` controls the minimum score, target location, remote inclusion, discovery/application limits, database and CSV locations, optional Greenhouse board tokens, and browser settings.
 
-`private/applicant.properties.example` is a reusable safe template. The application reads only `private/applicant.properties`. Do not invent answers: leave unknown work authorization, sponsorship, compensation, availability, or voluntary-disclosure fields blank.
+`private/applicant.properties.example` is a reusable fictional profile that shows the expected format. The application reads only `private/applicant.properties`. Replace every sample value with verified information, and leave unknown work authorization, sponsorship, compensation, availability, or voluntary-disclosure fields blank.
 
 ## Output
 
