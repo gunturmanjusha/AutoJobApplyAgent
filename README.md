@@ -28,7 +28,7 @@ Only Greenhouse is in scope now.
 | Resume parsing, applicant profile, matching, SQLite/CSV, duplicate checks | Implemented; compiled |
 | Public Remotive and configured Greenhouse job retrieval | Implemented |
 | Persistent browser sessions | Implemented; browser execution unverified |
-| Greenhouse form adapter | Implemented but unverified against real forms; submission disabled |
+| Greenhouse form adapter | Required-field validation and local fixture safety tests implemented; real forms remain unverified; submission disabled |
 | Automatic Greenhouse board-directory ingestion and persistent queue | In progress |
 | Confirmed employer submissions | Not implemented or verified |
 | Gmail, LinkedIn, Oracle Fusion, Workday, Lever | Not in this phase |
@@ -49,6 +49,12 @@ Greenhouse has no global board API. The next implementation ingests a legitimate
 4. Run `com.autojobapply.Main`.
 
 `data/applications.db` is authoritative; `data/applications.csv` is its report. Keep `authorized.submission.enabled=false` until a platform adapter is validated. `SUBMITTED` requires genuine employer confirmation.
+
+## Execution safety modes
+
+`job.execution.mode=DISCOVER_ONLY` is the default: it discovers, matches, and queues positions without opening forms. `DRY_RUN` may open and validate a supported form but never clicks Submit. `LIVE` requires both `job.auto.submit=true` and `authorized.submission.enabled=true`; it starts with `job.max.submissions.per.run=1` and stops additional LIVE work after the configured validation-failure threshold. Required unknown fields, missing resume attachments, visible errors, incomplete screening answers, and unverified confirmations result in `NEEDS_MANUAL_ACTION` or `NEEDS_VERIFICATION`, never `SUBMITTED`.
+
+Local Step 3 fixture tests cover complete forms, missing required values or resume attachments, unanswered required screening questions, incorrect applicant values, visible validation errors, and unsupported required fields. They use a mocked submit action only. Browser validation against real Greenhouse forms is still unverified because Playwright cannot initialize in the Codex environment.
 
 ## Reliability and safety
 

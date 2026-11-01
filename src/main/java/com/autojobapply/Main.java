@@ -2,6 +2,7 @@ package com.autojobapply;
 
 import com.autojobapply.application.SubmissionService;
 import com.autojobapply.config.Config;
+import com.autojobapply.config.ExecutionMode;
 import com.autojobapply.discovery.JobDiscovery;
 import com.autojobapply.discovery.GreenhouseCompanyDiscoveryService;
 import com.autojobapply.discovery.GreenhouseJobDiscoveryService;
@@ -30,8 +31,20 @@ public final class Main {
                 for (Job job : jobs) { if (tracker.isKnown(job)) { summary.duplicates++; continue; } ScoredJob scored = matcher.score(job); tracker.record(scored, scored.eligible() ? ApplicationStatus.MATCHED : ApplicationStatus.SKIPPED, null); if (scored.eligible()) { tracker.enqueue(scored); eligible.add(scored); } }
                 eligible.addAll(new GreenhousePipelineService(new GreenhouseCompanyDiscoveryService(),new GreenhouseJobDiscoveryService(),tracker,matcher,config).run());
                 eligible.sort(Comparator.comparingInt(ScoredJob::score).reversed()); summary.matched = eligible.size();
-                SubmissionService submitter = new SubmissionService(config, profile, tracker);
-                for (ScoredJob job : eligible.stream().limit(config.maxApplications()).toList()) summary.count(submitter.process(job));
+                if (config.executionMode() != ExecutionMode.DISCOVER_ONLY) {
+                    SubmissionService submitter = new SubmissionService(config, profile, tracker);
+                    int limit = config.executionMode() == ExecutionMode.LIVE ? config.maxSubmissions() : config.maxApplications();
+                    int validationFailures = 0;
+                    for (ScoredJob job : eligible.stream().limit(limit).toList()) {
+                        ApplicationStatus result = submitter.process(job);
+                        summary.count(result);
+                        if (config.executionMode() == ExecutionMode.LIVE && (result == ApplicationStatus.NEEDS_MANUAL_ACTION
+                                || result == ApplicationStatus.NEEDS_VERIFICATION || result == ApplicationStatus.FAILED)) {
+                            validationFailures++;
+                            if (validationFailures >= config.validationFailureStopThreshold()) break;
+                        }
+                    }
+                }
                 tracker.exportCsv(config.csvPath());
             }
         } catch (Exception e) { System.err.println("AUTO JOB APPLY AGENT FAILED: " + e.getMessage()); e.printStackTrace(System.err); log.error("Run stopped before completion: {}", e.getMessage(), e); summary.failed++; }
