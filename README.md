@@ -62,3 +62,7 @@ Your real resume and `private/applicant.properties` are meant to stay on your co
 | Gmail OAuth security foundation | Needs your local Google OAuth client configuration |
 | Employer form filling and confirmed submission | Not yet implemented per ATS platform |
 | LinkedIn automation | Not part of Phase 1 |
+
+### Greenhouse validation status
+
+The first Greenhouse adapter is compiled but has **not** been validated against a live employer form in this environment. The local Playwright Chromium runtime is not installed, so no real employer pages were opened, no profile fields were filled, and no resume was attached. Production submission remains disabled. The adapter now requires both a post-submit page transition and a specific application-success component before it can record `SUBMITTED`; generic page text alone is not sufficient.
