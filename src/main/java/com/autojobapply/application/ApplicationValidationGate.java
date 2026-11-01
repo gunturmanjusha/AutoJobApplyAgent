@@ -12,6 +12,9 @@ public final class ApplicationValidationGate {
     private final ApplicantAnswerResolver answers = new ApplicantAnswerResolver();
 
     public FormValidationResult validate(ApplicantProfile profile, Path resume, List<FormField> fields, List<String> visibleErrors) {
+        return validate(profile, resume, fields, java.util.Map.of(), visibleErrors);
+    }
+    public FormValidationResult validate(ApplicantProfile profile, Path resume, List<FormField> fields, java.util.Map<String, String> answered, List<String> visibleErrors) {
         List<String> validated = new ArrayList<>(), unresolved = new ArrayList<>();
         String legalName = profile.get("legal.name"), email = profile.get("email"), phone = profile.get("phone");
         if (legalName.isBlank()) unresolved.add("legal.name:missing-profile-value");
@@ -25,7 +28,7 @@ public final class ApplicationValidationGate {
             if (!field.required()) continue;
             if (!field.supported()) { unresolved.add(field.label() + ":missing-profile-answer-or-unsupported-question"); continue; }
             if (field.blank()) { unresolved.add(field.label() + ":missing-required-value"); continue; }
-            String expected = answers.answer(profile, field.label()).orElseGet(() -> expectedValue(key, legalName, email, phone, profile.get("location"), profile.get("country")));
+            String expected = answered.get(field.name()); if (expected == null) expected = answers.answer(profile, field.label()).orElseGet(() -> expectedValue(key, legalName, email, phone, profile.get("location"), profile.get("country")));
             if (expected == null) unresolved.add(field.label() + ":missing-profile-answer-or-unsupported-question");
             else if (!same(key, expected, field.value())) unresolved.add(field.label() + ":does-not-match-verified-profile");
             else validated.add(field.label());

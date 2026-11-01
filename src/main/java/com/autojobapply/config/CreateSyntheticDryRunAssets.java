@@ -31,6 +31,15 @@ public final class CreateSyntheticDryRunAssets {
         values.setProperty("github.url", "https://example.invalid/jordan-rivera");
         values.setProperty("work.authorization", "Synthetic test answer only");
         values.setProperty("work.authorization.answer", "Yes");
+        values.setProperty("sponsorship.required.answer", "No");
+        values.setProperty("immigration.i140.approved.answer", "No");
+        values.setProperty("experience.years", "12");
+        values.setProperty("skills.verified", "Java 17, Java 21, Spring Boot, Kafka, distributed systems, microservices, SQL, cloud, system design");
+        values.setProperty("professional.summary", "I am a Principal/Staff Java backend engineer who builds cloud-native distributed systems.");
+        values.setProperty("employment.1.highlights", "At Northstar Platform Labs, I designed event-driven Java 21 services and Kafka data pipelines.");
+        values.setProperty("education.degree", "Bachelor of Science in Computer Science");
+        values.setProperty("relocation.answer", "Yes");
+        values.setProperty("compensation.expectation", "$190,000 USD base");
         values.setProperty("referral.answer", "No");
         values.setProperty("sms.consent.answer", "No, I do not consent to text messages");
         values.setProperty("answer.are.you.located.in.montreal.qc.canada", "No");

@@ -29,10 +29,10 @@ public final class GreenhouseApplicationAdapter {
             fill(form, "input[name*=last_name],input[id*=last_name]", last(profile.get("legal.name")));
             fill(form, "input[type=email],input[name*=email],input[id=email],input[autocomplete=email]", profile.get("email"));
             fill(form, "input[type=tel],input[name*=phone]", profile.get("phone"));
-            Map<String, String> answered = applyProfileAnswers(page, form, profile);
+            Map<String, String> answered = applyProfileAnswers(page, form, profile, scored.job());
             Locator upload = form.locator("input[type=file][name*=resume],input[type=file][id*=resume]").first(); if (upload.count() == 0) return attempt(ApplicationStatus.NEEDS_MANUAL_ACTION, null, false, "resume-control-not-found"); upload.setInputFiles(resume); page.waitForTimeout(500);
             boolean resumeAttached = Boolean.TRUE.equals(form.locator("input[type=file]").evaluateAll("inputs => inputs.some(input => input.files && input.files.length > 0)")) || form.innerText().contains(resume.getFileName().toString());
-            FormValidationResult validation = validationGate.validate(profile, resume, inspectedFields(form, answered, resumeAttached), visibleErrors(form));
+            FormValidationResult validation = validationGate.validate(profile, resume, inspectedFields(form, answered, resumeAttached), answered, visibleErrors(form));
             if (!validation.valid()) return attempt(ApplicationStatus.NEEDS_MANUAL_ACTION, validation, false, "validation-failed");
             if (mode == ExecutionMode.DRY_RUN) return attempt(ApplicationStatus.APPLYING, validation, false, "READY_FOR_SUBMISSION_IN_DRY_RUN");
             Locator button = form.locator("button[type=submit],input[type=submit]").first(); if (button.count() == 0) return attempt(ApplicationStatus.NEEDS_MANUAL_ACTION, validation, false, "submit-control-not-found");
@@ -43,12 +43,12 @@ public final class GreenhouseApplicationAdapter {
         } catch (Exception exception) { String detail = exception.getMessage() == null ? "no detail" : exception.getMessage().replaceAll("[\\r\\n]+", " ").trim(); return attempt(ApplicationStatus.FAILED, null, false, exception.getClass().getSimpleName() + ": " + detail.substring(0, Math.min(detail.length(), 500))); }
     }
 
-    private Map<String, String> applyProfileAnswers(Page page, Locator form, ApplicantProfile profile) {
+    private Map<String, String> applyProfileAnswers(Page page, Locator form, ApplicantProfile profile, com.autojobapply.model.Job job) {
         Map<String, String> answered = new HashMap<>(); Locator controls = form.locator("input,textarea,select");
         for (int index = 0; index < controls.count(); index++) {
             Locator control = controls.nth(index); if ("file".equalsIgnoreCase(attribute(control, "type")) || "true".equalsIgnoreCase(attribute(control, "aria-hidden"))) continue;
             String name = firstNonBlank(attribute(control, "name"), attribute(control, "id"), "unnamed-field-" + index); String label = label(control, name);
-            Optional<String> answer = answers.answer(profile, label); if (answer.isEmpty()) continue;
+            Optional<String> answer = answers.answer(profile, job, label, maxLength(control)); if (answer.isEmpty()) continue;
             if (choose(page, control, answer.get())) answered.put(name, answer.get());
         }
         return answered;
@@ -72,6 +72,7 @@ public final class GreenhouseApplicationAdapter {
     private boolean standard(String name) { String value = name.toLowerCase(); return value.contains("first") && value.contains("name") || value.contains("last") && value.contains("name") || value.contains("email") || value.contains("phone") || value.contains("location") || value.contains("country"); }
     private String label(Locator control, String fallback) { String aria = attribute(control, "aria-label"); if (!aria.isBlank()) return aria; Locator form = control.locator("xpath=ancestor::form[1]"); String labelledBy = attribute(control, "aria-labelledby"); if (!labelledBy.isBlank()) { Locator labelled = form.locator("[id='" + labelledBy.split("\\s+")[0] + "']"); if (labelled.count() > 0) return labelled.first().textContent(); } String id = attribute(control, "id"); if (!id.isBlank()) { Locator label = form.locator("label[for='" + id + "']"); if (label.count() > 0) return label.first().textContent(); } return fallback; }
     private String attribute(Locator locator, String name) { String value = locator.getAttribute(name); return value == null ? "" : value; }
+    private int maxLength(Locator control) { try { String value = attribute(control, "maxlength"); return value.isBlank() ? 1000 : Integer.parseInt(value); } catch (NumberFormatException ignored) { return 1000; } }
     private boolean compatibleOption(Locator control, String answer, String option) { if (same(answer, option)) return true; String id = firstNonBlank(attribute(control, "id"), attribute(control, "name"), "").toLowerCase(Locale.ROOT); return id.contains("country") && option != null && option.trim().matches("(?i)" + java.util.regex.Pattern.quote(answer.trim()) + "\\s*\\+\\d+"); }
     private boolean selectedComboboxValue(Locator control, String answer) { Locator shell = control.locator("xpath=ancestor::*[contains(@class,'select-shell')][1]"); if (shell.count() == 0 || shell.locator("[class*='value-container--has-value']").count() == 0) return false; String id = firstNonBlank(attribute(control, "id"), attribute(control, "name"), "").toLowerCase(Locale.ROOT); return id.contains("country") || shell.innerText().toLowerCase(Locale.ROOT).contains(answer.toLowerCase(Locale.ROOT)); }
     private String firstNonBlank(String first, String second, String fallback) { return !first.isBlank() ? first : !second.isBlank() ? second : fallback; }
