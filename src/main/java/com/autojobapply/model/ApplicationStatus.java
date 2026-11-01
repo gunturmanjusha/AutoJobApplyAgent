@@ -1,0 +1,1 @@
+package com.autojobapply.model; public enum ApplicationStatus { DISCOVERED, MATCHED, SKIPPED, APPLYING, SUBMITTED, FAILED, BLOCKED, UNSUPPORTED, UNKNOWN, NEEDS_VERIFICATION }

@@ -1,0 +1,23 @@
+# Copy to private/applicant.properties (ignored by Git). Leave unknown answers blank.
+legal.name=
+email=
+phone=
+location=San Francisco Bay Area, CA
+linkedin.url=
+github.url=
+work.authorization=
+visa.sponsorship=
+relocation=
+salary.expectation=
+# Answer only when you have explicitly verified the value. Do not add passwords here.
+available.start.date=
+notice.period=
+employment.type.preference=
+remote.preference=
+# Leave sensitive/voluntary fields blank unless you intentionally want to disclose them.
+criminal.history=
+disability.disclosure=
+veteran.disclosure=
+gender.identity=
+race.ethnicity=
+# Employer-specific, verified answers may be added as screening.question.<short-name>=...

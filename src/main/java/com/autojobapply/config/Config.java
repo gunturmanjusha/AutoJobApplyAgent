@@ -1,0 +1,10 @@
+package com.autojobapply.config;
+import java.io.*; import java.nio.file.*; import java.util.*;
+public record Config(Properties values) {
+  public static Config load() throws IOException { Properties p=new Properties(); try(InputStream in=Config.class.getResourceAsStream("/application.properties")){p.load(in);} Path override=Path.of("application.properties"); if(Files.exists(override))try(InputStream in=Files.newInputStream(override)){p.load(in);} return new Config(p); }
+  private String get(String k){return values.getProperty(k);}
+  public Path resumePath(){return Path.of(get("job.resume.path"));} public Path profilePath(){return Path.of(get("job.applicant.profile.path"));} public Path databasePath(){return Path.of(get("job.database.path"));} public Path csvPath(){return Path.of(get("job.report.csv"));}
+  public int minimumScore(){return Integer.parseInt(get("job.minimum.match.score"));} public int maxDiscovered(){return Integer.parseInt(get("job.max.discovered.per.run"));} public int maxApplications(){return Integer.parseInt(get("job.max.applications.per.run"));}
+  public boolean includeRemote(){return Boolean.parseBoolean(get("job.include.remote"));} public boolean autoSubmit(){return Boolean.parseBoolean(get("job.auto.submit"));} public boolean authorizedSubmission(){return Boolean.parseBoolean(get("authorized.submission.enabled"));}
+  public List<String> greenhouseBoards(){String v=get("greenhouse.board.tokens"); return v==null||v.isBlank()?List.of():Arrays.stream(v.split(",")).map(String::trim).filter(s->!s.isEmpty()).toList();}
+}

@@ -1,0 +1,1 @@
+package com.autojobapply.model; import java.util.*; public record ScoredJob(Job job, int score, List<String> matchingSkills, List<String> missingSkills, boolean eligible, String reason) {}
