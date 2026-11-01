@@ -50,6 +50,8 @@ Greenhouse has no global board API. The next implementation ingests a legitimate
 
 `data/applications.db` is authoritative; `data/applications.csv` is its report. Keep `authorized.submission.enabled=false` until a platform adapter is validated. `SUBMITTED` requires genuine employer confirmation.
 
+For real-form validation outside Codex, select the checked-in **Greenhouse DRY RUN** IntelliJ configuration. Its JVM properties force `DRY_RUN`, `job.auto.submit=false`, and `authorized.submission.enabled=false`; changing the resource file cannot cause that configuration to click Submit.
+
 ## Execution safety modes
 
 `job.execution.mode=DISCOVER_ONLY` is the default: it discovers, matches, and queues positions without opening forms. `DRY_RUN` may open and validate a supported form but never clicks Submit. `LIVE` requires both `job.auto.submit=true` and `authorized.submission.enabled=true`; it starts with `job.max.submissions.per.run=1` and stops additional LIVE work after the configured validation-failure threshold. Required unknown fields, missing resume attachments, visible errors, incomplete screening answers, and unverified confirmations result in `NEEDS_MANUAL_ACTION` or `NEEDS_VERIFICATION`, never `SUBMITTED`.
