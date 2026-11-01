@@ -22,6 +22,7 @@ public final class CreateSyntheticDryRunAssets {
         values.setProperty("email", "jordan.rivera@example.invalid");
         values.setProperty("phone", "4155550147");
         values.setProperty("location", "San Francisco, CA");
+        values.setProperty("country", "United States");
         values.setProperty("linkedin.url", "https://example.invalid/jordan-rivera");
         values.setProperty("github.url", "https://example.invalid/jordan-rivera");
         values.setProperty("work.authorization", "Synthetic test answer only");

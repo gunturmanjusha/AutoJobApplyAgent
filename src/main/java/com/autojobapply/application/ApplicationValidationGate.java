@@ -43,7 +43,7 @@ public final class ApplicationValidationGate {
                 unresolved.add(field.name() + ":screening-answer-must-be-explicitly-mapped");
                 continue;
             }
-            String expected = expectedValue(key, legalName, email, phone, profile.get("location"));
+            String expected = expectedValue(key, legalName, email, phone, profile.get("location"), profile.get("country"));
             if (expected == null) {
                 unresolved.add(field.name() + ":unsupported-required-field");
             } else if (!same(key, expected, field.value())) {
@@ -58,12 +58,13 @@ public final class ApplicationValidationGate {
         return new FormValidationResult(valid, List.copyOf(validated), List.copyOf(unresolved), List.copyOf(visibleErrors), resumeAttached);
     }
 
-    private String expectedValue(String key, String legalName, String email, String phone, String location) {
+    private String expectedValue(String key, String legalName, String email, String phone, String location, String country) {
         if (key.contains("first") && key.contains("name")) return first(legalName);
         if (key.contains("last") && key.contains("name")) return last(legalName);
         if (key.contains("email")) return email;
         if (key.contains("phone")) return phone;
         if (key.contains("location")) return location;
+        if (key.contains("country")) return country;
         return null;
     }
 

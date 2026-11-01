@@ -10,6 +10,7 @@ import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.options.SelectOption;
 import com.microsoft.playwright.options.WaitUntilState;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,6 +49,8 @@ public final class GreenhouseApplicationAdapter {
             fill(form, "input[type=email],input[name*=email],input[id=email],input[autocomplete=email]", profile.get("email"));
             fill(form, "input[type=tel],input[name*=phone]", profile.get("phone"));
             fill(form, "input[name*=location],input[id*=location]", profile.get("location"));
+            fill(form, "input[name*=country],input[id*=country]", profile.get("country"));
+            select(form, "select[name*=country],select[id*=country]", profile.get("country"));
             Locator upload = form.locator("input[type=file]").first();
             if (upload.count() == 0) return attempt(ApplicationStatus.NEEDS_MANUAL_ACTION, null, false, "resume-control-not-found");
             upload.setInputFiles(resume);
@@ -100,12 +103,13 @@ public final class GreenhouseApplicationAdapter {
     private boolean supported(String name) {
         String value = name.toLowerCase();
         return value.contains("first") && value.contains("name") || value.contains("last") && value.contains("name")
-                || value.contains("email") || value.contains("phone") || value.contains("location");
+                || value.contains("email") || value.contains("phone") || value.contains("location") || value.contains("country");
     }
 
     private String attribute(Locator locator, String name) { String value = locator.getAttribute(name); return value == null ? "" : value; }
     private String firstNonBlank(String first, String second, String fallback) { return !first.isBlank() ? first : !second.isBlank() ? second : fallback; }
     private void fill(Locator root, String selector, String value) { if (value == null || value.isBlank()) return; Locator locator = root.locator(selector).first(); if (locator.count() > 0) locator.fill(value); }
+    private void select(Locator root, String selector, String value) { if (value == null || value.isBlank()) return; Locator locator = root.locator(selector).first(); if (locator.count() > 0) locator.selectOption(new SelectOption().setLabel(value)); }
     private String first(String name) { return name == null || name.isBlank() ? "" : name.trim().split("\\s+")[0]; }
     private String last(String name) { String[] parts = name == null ? new String[0] : name.trim().split("\\s+"); return parts.length < 2 ? "" : parts[parts.length - 1]; }
     private ApplicationAttempt attempt(ApplicationStatus status, FormValidationResult validation, boolean submitted, String confirmation) { return new ApplicationAttempt(status, validation, submitted, confirmation); }
