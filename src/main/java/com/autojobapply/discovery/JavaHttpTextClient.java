@@ -1,0 +1,3 @@
+package com.autojobapply.discovery;
+import java.net.*; import java.net.http.*; import java.time.*;
+public final class JavaHttpTextClient implements HttpTextClient { private final HttpClient http=HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(20)).build(); public String get(URI uri)throws Exception{HttpResponse<String> r=http.send(HttpRequest.newBuilder(uri).header("User-Agent","AutoJobApplyAgent/1.0").timeout(Duration.ofSeconds(30)).GET().build(),HttpResponse.BodyHandlers.ofString());if(r.statusCode()/100!=2)throw new IllegalStateException("HTTP "+r.statusCode());return r.body();} }
