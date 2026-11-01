@@ -1,11 +1,11 @@
 # Fictional sample only. Copy to private/applicant.properties and replace every value.
 # This example is safe to commit; do not add passwords, tokens, or real answers to it.
-legal.name=Jordan Example
-email=jordan.example@example.com
+legal.name=Amore Mio
+email=amore.mio@example.com
 phone=415-555-0142
 location=San Francisco, CA
-linkedin.url=https://www.linkedin.com/in/jordan-example
-github.url=https://github.com/jordan-example
+linkedin.url=https://www.linkedin.com/in/amore-mio
+github.url=https://github.com/amore-mio
 work.authorization=Authorized to work in the United States
 visa.sponsorship=No sponsorship required
 relocation=Open to Bay Area hybrid and remote roles
